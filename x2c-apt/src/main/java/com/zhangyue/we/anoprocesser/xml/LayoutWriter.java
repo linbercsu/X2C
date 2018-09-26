@@ -41,6 +41,7 @@ public class LayoutWriter {
 
         MethodSpec methodSpec = MethodSpec.methodBuilder("createView")
                 .addParameter(ClassName.get("android.content", "Context"), "ctx")
+                .addParameter(ClassName.get("android.view", "ViewGroup"), "parent")
                 .addStatement(mMethodSpec)
                 .returns(ClassName.get("android.view", "View"))
                 .addAnnotation(Override.class)

@@ -148,8 +148,8 @@ public class View implements ITranslator {
         String obj = getObjName();
         if (mTagName.equals("include")) {
             String javaName = LayoutManager.instance().translate(getIncludeLayout());
-            stringBuilder.append(String.format("%s %s =(View) new %s().createView(ctx);\n"
-                    , mName, obj, javaName));
+            stringBuilder.append(String.format("%s %s =(View) new %s().createView(ctx, %s);\n"
+                    , mName, obj, javaName, mParent != null ? mParent.getObjName() : "parent"));
         } else {
             stringBuilder.append(String.format("%s %s = new %s(ctx);\n", mName, obj, mName));
         }
@@ -198,6 +198,22 @@ public class View implements ITranslator {
         if (mParent != null) {
             stringBuilder.append(String.format("%s.setLayoutParams(%s);\n", obj, mLayoutParamsObj));
             stringBuilder.append(String.format("%s.addView(%s);\n", mParent.getObjName(), obj));
+        } else {
+            mImports.add("java.lang.reflect.Method");
+            stringBuilder.append("if (parent != null) {\n");
+            stringBuilder.append("  try {\n");
+            stringBuilder.append("    Class<? extends ViewGroup> viewGroupClass = parent.getClass();\n");
+            stringBuilder.append("    Method method = viewGroupClass.getDeclaredMethod(\"generateDefaultLayoutParams\", null);\n");
+            stringBuilder.append("    method.setAccessible(true);\n");
+            stringBuilder.append("    ViewGroup.LayoutParams layoutParams = (ViewGroup.LayoutParams) method.invoke(parent);\n");
+            stringBuilder.append("    layoutParams.width = " + getWidth(getWidthStr()) + ";\n");
+            stringBuilder.append("    layoutParams.height = " + getHeight(getHeightStr()) + ";\n");
+
+            stringBuilder.append(String.format("%s.setLayoutParams(layoutParams);\n", obj));
+            stringBuilder.append("  }catch (Exception e) {\n" +
+                    "                e.printStackTrace();\n" +
+                    "          }\n");
+            stringBuilder.append("}\n");
         }
 
         if (!mPadding.equals("0")) {

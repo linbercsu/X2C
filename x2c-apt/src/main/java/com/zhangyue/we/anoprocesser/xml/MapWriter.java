@@ -1,9 +1,9 @@
 package com.zhangyue.we.anoprocesser.xml;
 
 import com.squareup.javapoet.x2c.ClassName;
+import com.squareup.javapoet.x2c.JavaFile;
 import com.squareup.javapoet.x2c.MethodSpec;
 import com.squareup.javapoet.x2c.TypeSpec;
-import com.squareup.javapoet.x2c.JavaFile;
 import com.zhangyue.we.anoprocesser.Util;
 
 import java.io.File;
@@ -38,7 +38,7 @@ public class MapWriter {
         TreeSet<String> imports = new TreeSet<>();
         StringBuilder stringBuilder = new StringBuilder();
         if (mLayouts.size() == 1 && mJavaNames.size() == 1) {
-            stringBuilder.append(String.format("return new %s().createView(context)", mJavaNames.get(0)));
+            stringBuilder.append(String.format("return new %s().createView(context, parent)", mJavaNames.get(0)));
         } else {
             stringBuilder.append("View view = null ;");
             stringBuilder.append("\nint sdk = Build.VERSION.SDK_INT;");
@@ -59,13 +59,14 @@ public class MapWriter {
                         stringBuilder.append(String.format(" else if (sdk >= %s) {", sdk));
                     }
                 }
-                stringBuilder.append(String.format("\n\tview = new %s().createView(context);\n}", mJavaNames.get(i)));
+                stringBuilder.append(String.format("\n\tview = new %s().createView(context, parent);\n}", mJavaNames.get(i)));
             }
             stringBuilder.append("\nreturn view");
         }
 
         MethodSpec methodSpec = MethodSpec.methodBuilder("createView")
                 .addParameter(ClassName.get("android.content", "Context"), "context")
+                .addParameter(ClassName.get("android.view", "ViewGroup"), "parent")
                 .addStatement(stringBuilder.toString())
                 .returns(ClassName.get("android.view", "View"))
                 .addAnnotation(Override.class)

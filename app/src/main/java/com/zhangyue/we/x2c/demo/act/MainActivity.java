@@ -7,7 +7,6 @@ import android.os.Bundle;
 import com.zhangyue.we.x2c.X2C;
 import com.zhangyue.we.x2c.ano.Xml;
 import com.zhangyue.we.x2c.demo.R;
-import com.zhangyue.x2c.demo.ActivitySubModule;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -36,7 +35,7 @@ public class MainActivity extends Activity {
 
     @OnClick(R.id.sub)
     void toSub() {
-        startActivity(new Intent(this, ActivitySubModule.class));
+//        startActivity(new Intent(this, ActivitySubModule.class));
     }
 
 

@@ -76,13 +76,13 @@ public class X2C {
             }
             sSparseArray.put(layoutId, creator);
         }
-        return creator.createView(context);
+        return creator.createView(context, null);
     }
 
     private static class DefaultCreator implements IViewCreator {
 
         @Override
-        public View createView(Context context) {
+        public View createView(Context context, ViewGroup parent) {
             return null;
         }
     }
